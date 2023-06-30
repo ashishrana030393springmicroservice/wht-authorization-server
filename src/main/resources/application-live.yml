@@ -1,0 +1,33 @@
+app:
+  ui1:
+    host: localhost
+    port: 4200
+    url: http://${app.ui1.host}:${app.ui1.port}
+  auth-server:
+    host: localhost
+    port: ${server.port}
+    url: http://${app.auth-server.host}:${app.auth-server.port}
+    allowed-origins:
+      - ${app.ui1.url}
+
+spring:
+  datasource:
+    username: root
+    password: password
+    url: jdbc:mysql://localhost:3306/projectdb
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    properties:
+      hibernate:
+        connection:
+          characterEncoding: utf-8
+          CharSet: utf-8
+          useUnicode: true
+          collationConnection: utf8_bin
+    database-platform: org.hibernate.dialect.MySQL57Dialect
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+
+server:
+  port: 8080
