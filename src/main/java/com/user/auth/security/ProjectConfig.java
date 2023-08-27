@@ -11,14 +11,19 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.server.authorization.authentication.OAuth2AuthorizationCodeRequestAuthenticationProvider;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer;
 import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings;
+import org.springframework.security.oauth2.server.authorization.token.JwtEncodingContext;
+import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher;
@@ -26,12 +31,14 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 @Configuration
 @RequiredArgsConstructor
 @Slf4j
 public class ProjectConfig {
     private final AppConfig appConfig;
+
     @PostConstruct
     public void log(){
         log.debug(appConfig.toString());
@@ -41,6 +48,7 @@ public class ProjectConfig {
     SecurityFilterChain authSecurityFilterChain(HttpSecurity http) throws Exception{
         OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
         http.getConfigurer(OAuth2AuthorizationServerConfigurer.class)
+                .authorizationEndpoint(e->e.authenticationProviders(getAuthenticationProviders()))
                 .oidc(Customizer.withDefaults());
 
         http.cors(corsConfigurer-> {
@@ -61,9 +69,21 @@ public class ProjectConfig {
         return http.build();
     }
 
+    private Consumer<List<AuthenticationProvider>> getAuthenticationProviders() {
+        return authenticationProviders -> {
+            for(var authenticationProvider: authenticationProviders){
+                if(authenticationProvider instanceof OAuth2AuthorizationCodeRequestAuthenticationProvider provider){
+                    CustomRequestValidator validator = new CustomRequestValidator();
+                    provider.setAuthenticationValidator(validator);
+                }
+            }
+        };
+    }
+
     @Bean
     @Order(2)
     SecurityFilterChain appSecurityFilterChain(HttpSecurity http) throws Exception{
+
         http.cors(customizer-> {
             CorsConfigurationSource source= (s)->{
                 CorsConfiguration cc= new CorsConfiguration();
@@ -84,6 +104,8 @@ public class ProjectConfig {
         })
                 .csrf(cc->cc.disable());
         http.authorizeHttpRequests(req-> req
+                .requestMatchers(HttpMethod.POST, "/test","/validatepersonaldetails","/validatebasicinfo","/validateusername","/sign-up").permitAll()
+                .requestMatchers(HttpMethod.GET, "password-policy").permitAll()
                 .anyRequest().authenticated());
         return http.build();
     }
@@ -96,6 +118,13 @@ public class ProjectConfig {
     @Bean
     public AuthorizationServerSettings  authorizationServerSettings(){
         return AuthorizationServerSettings.builder().build();
+    }
+
+    @Bean
+    public OAuth2TokenCustomizer<JwtEncodingContext> auth2TokenCustomizer(){
+        return context-> {
+            context.getClaims().claim("authorities", context.getAuthorizedScopes());
+        };
     }
 
 //    @Bean

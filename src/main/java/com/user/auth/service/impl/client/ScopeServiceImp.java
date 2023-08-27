@@ -17,15 +17,15 @@ import java.util.Optional;
 public class ScopeServiceImp implements ScopeService {
     public static final String[] scopes = {OidcScopes.OPENID};
     private final ScopeRepository scopeRepository;
-    @PostConstruct
-    public void init(){
-        for(int i = 0; i<scopes.length; i++){
-           Optional<Scope> scopeOptional = this.scopeRepository.findByScope(scopes[i]);
-           if(scopeOptional.isEmpty()){
-               createScope(scopes[i]);
-           }
-        }
-    }
+//    @PostConstruct
+//    public void init(){
+//        for(int i = 0; i<scopes.length; i++){
+//           Optional<Scope> scopeOptional = this.scopeRepository.findByScope(scopes[i]);
+//           if(scopeOptional.isEmpty()){
+//               createScope(scopes[i]);
+//           }
+//        }
+//    }
 
     @Override
     public Scope findByScope(String oidcScope) {

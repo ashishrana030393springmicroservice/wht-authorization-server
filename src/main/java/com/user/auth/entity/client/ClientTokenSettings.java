@@ -11,6 +11,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name="client_token_settings")
 public class ClientTokenSettings extends BaseId{
     @Column(name="access_token_ttl")
     private long accessTokenTTL;

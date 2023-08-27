@@ -9,6 +9,7 @@ import java.util.Set;
 
 @Entity
 @Data
+@Table(name="permissions")
 public class Permission extends BaseId {
     @Column(unique = true,nullable = false)
     private String permissionId;

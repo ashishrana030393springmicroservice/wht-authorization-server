@@ -7,19 +7,12 @@ import com.user.auth.service.AuthenticationMethodService;
 import com.user.auth.service.GrantService;
 import com.user.auth.service.RedirectUrlService;
 import com.user.auth.service.ScopeService;
-import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
-import org.springframework.security.oauth2.core.oidc.OidcScopes;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
-import org.springframework.security.oauth2.server.authorization.settings.OAuth2TokenFormat;
-import org.springframework.security.oauth2.server.authorization.settings.TokenSettings;
 import org.springframework.stereotype.Service;
-
-import java.time.Duration;
-import java.util.UUID;
 
 @Service
 @AllArgsConstructor
@@ -31,25 +24,25 @@ public class ClientServiceImp implements RegisteredClientRepository {
     private final ScopeService scopeService;
     private final AppConfig appConfig;
 
-    @PostConstruct
-    public void init(){
-        RegisteredClient build = RegisteredClient.withId(UUID.randomUUID().toString())
-                .clientId("axkdw-skdsfs-ksdfks-akdfks")
-                .clientSecret("jskex-kwics-iecmw-aziec")
-                .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
-                .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
-                .scope(OidcScopes.OPENID)
-                .redirectUri( appConfig.getUi1().getUrl() + "/signin-callback")
-                .tokenSettings(TokenSettings.builder()
-                        .accessTokenFormat(OAuth2TokenFormat.REFERENCE)
-                        .accessTokenTimeToLive(Duration.ofHours(6))
-                        .build())
-                .build();
-        RegisteredClient byClientId = findByClientId(build.getClientId());
-        if(byClientId ==null){
-            save(build);
-        }
-    }
+//    @PostConstruct
+//    public void init(){
+//        RegisteredClient build = RegisteredClient.withId(UUID.randomUUID().toString())
+//                .clientId("axkdw-skdsfs-ksdfks-akdfks")
+//                .clientSecret("jskex-kwics-iecmw-aziec")
+//                .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
+//                .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
+//                .scope(OidcScopes.OPENID)
+//                .redirectUri( appConfig.getUi1().getUrl() + "/signin-callback")
+//                .tokenSettings(TokenSettings.builder()
+//                        .accessTokenFormat(OAuth2TokenFormat.REFERENCE)
+//                        .accessTokenTimeToLive(Duration.ofHours(6))
+//                        .build())
+//                .build();
+//        RegisteredClient byClientId = findByClientId(build.getClientId());
+//        if(byClientId ==null){
+//            save(build);
+//        }
+//    }
 
     @Override
     public void save(RegisteredClient registeredClient) {

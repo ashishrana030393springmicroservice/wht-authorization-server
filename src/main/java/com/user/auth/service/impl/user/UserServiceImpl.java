@@ -3,6 +3,8 @@ package com.user.auth.service.impl.user;
 import com.user.auth.dao.UserRepository;
 import com.user.auth.entity.user.Role;
 import com.user.auth.entity.user.User;
+import com.user.auth.enums.Gender;
+import com.user.auth.model.UserRegistration;
 import com.user.auth.service.RoleService;
 import com.user.auth.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -19,12 +21,15 @@ public class UserServiceImpl implements UserService {
     private final RoleService roleService;
 
     @Override
-    public User create(String username, String email, String rawPassword){
+    public User create(UserRegistration userRegistration){
         User user = User.withId(UUID.randomUUID().toString())
-                .email(email)
-                .username(username)
-                .password(passwordEncoder.encode(rawPassword))
+                .email(userRegistration.getUsername())
+                .username(userRegistration.getUsername().split("@")[0])
+                .firstName(userRegistration.getFirstName())
+                .lastName(userRegistration.getLastName())
+                .password(passwordEncoder.encode(userRegistration.getPassword()))
                 .enabled(true)
+                .gender(Gender.valueOf(userRegistration.getGender()))
                 .build();
         return this.userRepository.save(user);
     }
@@ -40,5 +45,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public User findByUsernameOrEmail(String identifier){
         return this.userRepository.findByUsernameOrEmail(identifier);
+    }
+
+    @Override
+    public boolean checkIfUserAlreadyExist(String identifier) {
+        return this.userRepository.checkUserExistByUsernameOrEmail(identifier);
     }
 }

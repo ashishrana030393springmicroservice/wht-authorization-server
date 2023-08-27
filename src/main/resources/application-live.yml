@@ -11,11 +11,25 @@ app:
       - ${app.ui1.url}
 
 spring:
+  rabbitmq:
+    username: guest
+    password: guest
+    host: 127.0.0.1
+    port: 5672
+    virtual-host: /
   datasource:
     username: root
     password: password
     url: jdbc:mysql://localhost:3306/projectdb
     driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      connection-timeout: 2000
+      maximum-pool-size: 5
+  flyway:
+    user: root
+    password: password
+    url: jdbc:mysql://localhost:3306/projectdb
+    baseline-on-migrate: true
   jpa:
     properties:
       hibernate:
@@ -29,5 +43,11 @@ spring:
     hibernate:
       ddl-auto: update
 
+
+logging:
+  level:
+    org:
+      springframework:
+        amqp: DEBUG
 server:
   port: 8080

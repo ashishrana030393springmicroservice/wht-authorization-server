@@ -9,6 +9,7 @@ import java.util.Set;
 
 @Entity
 @Data
+@Table(name = "roles")
 public class Role extends BaseId {
     @Column(unique = true,nullable = false)
     private String roleId;
