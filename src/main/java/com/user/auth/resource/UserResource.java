@@ -65,6 +65,7 @@ public class UserResource {
     @PostMapping("test")
     ResponseEntity<?> rabbitTest( @RequestBody UserRegistration userRegistration){
         template.convertAndSend(Constant.SIGNUP_EXCHANGE,Constant.SIGNUP,userRegistration);
+        System.out.println("test");
         return ResponseEntity.ok().body(null);
     }
 }
