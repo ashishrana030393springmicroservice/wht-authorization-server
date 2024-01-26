@@ -58,7 +58,7 @@ public class Client extends BaseId{
    }
 
    public RegisteredClient getRegisteredClient(){
-      return RegisteredClient.withId(Long.toString(getId()))
+      RegisteredClient build = RegisteredClient.withId(Long.toString(getId()))
               .clientId(getClientId())
               .clientSecret(getSecret())
               .clientAuthenticationMethods(methods(getAuthenticationMethods()))
@@ -67,8 +67,9 @@ public class Client extends BaseId{
               .redirectUris(redirectUrls(getRedirectUrls()))
               .tokenSettings(TokenSettings.builder()
                       .accessTokenTimeToLive(Duration.ofHours(getSetting().getAccessTokenTTL()))
-                      .accessTokenFormat(new OAuth2TokenFormat(getSetting().getType()))
+                      .accessTokenFormat(OAuth2TokenFormat.REFERENCE)
                       .build())
               .build();
+      return build;
    }
 }

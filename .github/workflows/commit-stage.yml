@@ -15,7 +15,7 @@ jobs:
         with:
           distribution: temurin
           java-version: 17
-          cache: gradle
+          cache: mvn
       - name: Code vulnerability scanning
         uses: anchore/scan-action@v3
         id: scan
@@ -32,4 +32,4 @@ jobs:
       - name: Build, unit tests integeration tests
         run: |
           chmod +x gradlew
-          ./gradlew build
+          mvn clean install

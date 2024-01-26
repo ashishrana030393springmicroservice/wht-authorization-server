@@ -5,8 +5,6 @@ import com.user.auth.service.SHAService;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.server.authorization.authentication.OAuth2AuthorizationCodeRequestAuthenticationProvider;
@@ -104,7 +103,7 @@ public class ProjectConfig {
         })
                 .csrf(cc->cc.disable());
         http.authorizeHttpRequests(req-> req
-                .requestMatchers(HttpMethod.POST, "/test","/validatepersonaldetails","/validatebasicinfo","/validateusername","/sign-up").permitAll()
+                .requestMatchers(HttpMethod.POST, "oauth2/token","/test","/validatepersonaldetails","/validatebasicinfo","/validateusername","/sign-up").permitAll()
                 .requestMatchers(HttpMethod.GET, "password-policy").permitAll()
                 .anyRequest().authenticated());
         return http.build();
@@ -112,7 +111,7 @@ public class ProjectConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder(){
-        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+        return new BCryptPasswordEncoder();
     }
 
     @Bean

@@ -1,6 +1,5 @@
 package com.user.auth.resource;
 
-import com.user.auth.config.Constant;
 import com.user.auth.entity.user.User;
 import com.user.auth.model.BasicInfo;
 import com.user.auth.model.PersonalDetail;
@@ -10,7 +9,7 @@ import com.user.auth.service.UserService;
 import com.user.auth.singleton.PasswordPolicyFactory;
 import jakarta.validation.*;
 import lombok.AllArgsConstructor;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
+//import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,7 +22,7 @@ import java.util.Set;
 @AllArgsConstructor
 public class UserResource {
     private final UserService userService;
-    private final RabbitTemplate template;
+    //private final RabbitTemplate template;
     @PostMapping("validatepersonaldetails")
     ResponseEntity<?> validatePersonalDetails(@RequestBody PersonalDetail personalDetail){
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
@@ -52,9 +51,10 @@ public class UserResource {
 
     @PostMapping("sign-up")
     ResponseEntity<?> registerUser(@Valid @RequestBody UserRegistration userRegistration){
-        template.convertAndSend(Constant.SIGNUP_EXCHANGE,Constant.SIGNUP,userRegistration);
+        //template.convertAndSend(Constant.SIGNUP_EXCHANGE,Constant.SIGNUP,userRegistration);
         User user = this.userService.create(userRegistration);
         return ResponseEntity.ok(user);
+
     }
 
     @GetMapping("password-policy")
@@ -64,7 +64,7 @@ public class UserResource {
 
     @PostMapping("test")
     ResponseEntity<?> rabbitTest( @RequestBody UserRegistration userRegistration){
-        template.convertAndSend(Constant.SIGNUP_EXCHANGE,Constant.SIGNUP,userRegistration);
+        //template.convertAndSend(Constant.SIGNUP_EXCHANGE,Constant.SIGNUP,userRegistration);
         System.out.println("test");
         return ResponseEntity.ok().body(null);
     }

@@ -1,6 +1,6 @@
 app:
   ui1:
-    host: localhost
+    host: 127.0.0.1
     port: 4200
     url: http://${app.ui1.host}:${app.ui1.port}
   auth-server:
@@ -11,12 +11,14 @@ app:
       - ${app.ui1.url}
 
 spring:
-  rabbitmq:
-    username: guest
-    password: guest
-    host: 127.0.0.1
-    port: 5672
-    virtual-host: /
+  application:
+    name: authorization-server
+#  rabbitmq:
+#    username: guest
+#    password: guest
+#    host: 127.0.0.1
+#    port: 5672
+#    virtual-host: /
   datasource:
     username: root
     password: password
@@ -38,7 +40,7 @@ spring:
           CharSet: utf-8
           useUnicode: true
           collationConnection: utf8_bin
-    database-platform: org.hibernate.dialect.MySQL57Dialect
+    #database-platform: org.hibernate.dialect.MySQL57Dialect
     show-sql: true
     hibernate:
       ddl-auto: update

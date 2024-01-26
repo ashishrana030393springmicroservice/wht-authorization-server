@@ -7,7 +7,9 @@ import com.user.auth.service.AuthenticationMethodService;
 import com.user.auth.service.GrantService;
 import com.user.auth.service.RedirectUrlService;
 import com.user.auth.service.ScopeService;
+import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
@@ -23,6 +25,7 @@ public class ClientServiceImp implements RegisteredClientRepository {
     private final GrantService grantService;
     private final ScopeService scopeService;
     private final AppConfig appConfig;
+    private final PasswordEncoder encoder;
 
 //    @PostConstruct
 //    public void init(){
@@ -43,6 +46,18 @@ public class ClientServiceImp implements RegisteredClientRepository {
 //            save(build);
 //        }
 //    }
+
+    @PostConstruct
+    public void encodePassword(){
+        Iterable<Client> all = this.clientRepository.findAll();
+        for(Client client: all){
+            if(!client.getSecret().startsWith("$2")){
+                client.setSecret(encoder.encode(client.getSecret()));
+            }
+            this.clientRepository.save(client);
+        }
+    }
+
 
     @Override
     public void save(RegisteredClient registeredClient) {
